@@ -17,15 +17,45 @@ class Product
         $this->id = $id;
     }
 
-    // Elimina el producto con el ID previamente establecido
+    // ✅ Elimina primero las ventas relacionadas y luego el producto
     public function delete()
     {
         if (!isset($this->id)) {
             return false;
         }
 
-        $stmt = $this->db->prepare("DELETE FROM products WHERE id = ?");
-        return $stmt->execute([$this->id]);
+        try {
+            // Inicia una transacción
+            $this->db->beginTransaction();
+
+            // 1. Eliminar ventas relacionadas
+            $stmtSales = $this->db->prepare("DELETE FROM sales WHERE product_id = ?");
+            $stmtSales->execute([$this->id]);
+
+            // 2. Eliminar producto
+            $stmtProduct = $this->db->prepare("DELETE FROM products WHERE id = ?");
+            $stmtProduct->execute([$this->id]);
+
+            // Confirmar la transacción
+            $this->db->commit();
+
+            return true;
+        } catch (PDOException $e) {
+            // Revertir si hay error
+            $this->db->rollBack();
+
+            // Puedes loguear el error si lo deseas: error_log($e->getMessage());
+            echo "<script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al eliminar',
+                    text: 'No se pudo eliminar el producto. Verifica que no tenga ventas relacionadas.',
+                    confirmButtonText: 'Aceptar'
+                });
+            </script>";
+
+            return false;
+        }
     }
 
     public function getAll()

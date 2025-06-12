@@ -66,7 +66,7 @@ La aplicación permite:
 
 ## Tecnologías Utilizadas
 
-- **Backend:** PHP (Laravel)
+- **Backend:** PHP 
 - **Base de Datos:** MySQL / MariaDB
 - **Frontend:** HTML5, CSS3, Bootstrap, JavaScript
 - **Versionamiento:** Git

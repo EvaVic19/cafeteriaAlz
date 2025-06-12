@@ -7,14 +7,14 @@ return [
     'host' => 'smtp.gmail.com',
 
     // Correo electrónico desde el que se enviarán los correos (debe estar autenticado)
-    'username' => 'tucorreo@gmail.com',
+    'username' => 'evicfulls@gmail.com',
 
     // Contraseña o clave de aplicación generada desde la configuración de seguridad de Gmail
     
-    'password' => 'tucontrasenadeaplicaciones',
+    'password' => 'gzfxkxezmavvtrjk',
 
     // Dirección de correo que aparecerá como remitente del mensaje
-    'from_email' => 'tucorreo@gmail.com',
+    'from_email' => 'samotraciaj@gmail.com',
 
     // Nombre que aparecerá como remitente (junto al correo)
     'from_name' => 'Cafetería Alianza',

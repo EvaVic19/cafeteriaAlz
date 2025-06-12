@@ -5,66 +5,63 @@ class User
 {
     private $db;
 
-    public function __construct() //Este es el constructor de la clase.
+    public function __construct()
     {
-        $this->db = Database::connect(); //Inicializa la propiedad $db con una conexión a la base de datos utilizando el método estático connect de la clase Database.
+        $this->db = Database::connect();
     }
 
-    //Método getAll(): Devuelve todos los usuarios.
+    // Obtener todos los usuarios
     public function getAll()
     {
-        $stmt = $this->db->query("SELECT id, name, email, password, role FROM users"); //Ejecuta la consulta SQL y devuelve todos los resultados como un array asociativo.
-        return $stmt->fetchAll(PDO::FETCH_ASSOC); //Devuelve todos los resultados como un array asociativo.
+        $stmt = $this->db->query("SELECT id, name, email, password, role FROM users");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    //Método create(): Crea un nuevo usuario en la base de datos.
+    // Crear nuevo usuario
     public function create($name, $email, $pass, $role)
     {
-        $stmt = $this->db->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)"); //Prepara una consulta SQL para insertar un nuevo usuario en la base de datos.
-        return $stmt->execute([$name, $email, $pass, $role]); //Ejecuta la consulta SQL con los parámetros proporcionados.
+        $stmt = $this->db->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)");
+        return $stmt->execute([$name, $email, $pass, $role]);
     }
 
-
-    //Método find(): Busca un usuario por su ID.
+    // Buscar usuario por ID
     public function find($id)
-    { 
-        $stmt = $this->db->prepare("SELECT id, name, email, password, role FROM users WHERE id = ?"); //Prepara una consulta SQL para buscar un usuario por su ID.
-        $stmt->execute([$id]); //Ejecuta la consulta SQL con el ID proporcionado.
-        return $stmt->fetch(PDO::FETCH_ASSOC); //Devuelve el resultado como un array asociativo.
+    {
+        $stmt = $this->db->prepare("SELECT id, name, email, password, role FROM users WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-
-    //Método update(): Actualiza un usuario en la base de datos.
+    // Actualizar datos del usuario
     public function update($id, $name, $email, $role)
-    { 
-        $stmt = $this->db->prepare("UPDATE users SET name = ?, email = ?, role = ? WHERE id = ?"); //Prepara una consulta SQL para actualizar un usuario en la base de datos.
-        return $stmt->execute([$name, $email, $role, $id]); //Ejecuta la consulta SQL con los parámetros proporcionados.
+    {
+        $stmt = $this->db->prepare("UPDATE users SET name = ?, email = ?, role = ? WHERE id = ?");
+        return $stmt->execute([$name, $email, $role, $id]);
     }
 
-
-    //Método delete(): Elimina un usuario de la base de datos.
+    // Eliminar usuario
     public function delete($id)
-    { 
-        $stmt = $this->db->prepare("DELETE FROM users WHERE id = ?"); //Prepara una consulta SQL para eliminar un usuario de la base de datos.
-        return $stmt->execute([$id]); //Ejecuta la consulta SQL con el ID proporcionado.
+    {
+        $stmt = $this->db->prepare("DELETE FROM users WHERE id = ?");
+        return $stmt->execute([$id]);
     }
 
-    // Método getByEmail(): Busca un usuario por su correo electrónico. Para la autenticacion
+    // Buscar usuario por email (para login o recuperación)
     public function getByEmail($email)
     {
-        $stmt = $this->db->prepare("SELECT id, name, email, password, role FROM users WHERE email = ?");// Prepara una consulta SQL para buscar un usuario por su correo electrónico.
-        $stmt->execute([$email]);// Ejecuta la consulta SQL con el correo electrónico proporcionado.
-        return $stmt->fetch(PDO::FETCH_ASSOC);// Devuelve el resultado como un array asociativo.
+        $stmt = $this->db->prepare("SELECT id, name, email, password, role FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-
-    //Metodos para recupetacion de contrasena
+    // Guardar token de recuperación y su expiración
     public function saveResetToken($userId, $token, $expiry)
     {
         $stmt = $this->db->prepare("UPDATE users SET reset_token = ?, token_expiry = ? WHERE id = ?");
-        $stmt->execute([$token, $expiry, $userId]);
+        return $stmt->execute([$token, $expiry, $userId]);
     }
 
+    // Buscar usuario por token
     public function findByToken($token)
     {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE reset_token = ?");
@@ -72,19 +69,19 @@ class User
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    // Actualizar contraseña del usuario
     public function updatePassword($userId, $hashedPassword)
     {
         $stmt = $this->db->prepare("UPDATE users SET password = ? WHERE id = ?");
-        $stmt->execute([$hashedPassword, $userId]);
+        return $stmt->execute([$hashedPassword, $userId]);
     }
 
+    // Eliminar el token de recuperación después de usarlo
     public function clearResetToken($userId)
     {
         $stmt = $this->db->prepare("UPDATE users SET reset_token = NULL, token_expiry = NULL WHERE id = ?");
-        $stmt->execute([$userId]);
+        return $stmt->execute([$userId]);
     }
-
-    
 }
 
     
